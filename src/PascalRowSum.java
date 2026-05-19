@@ -1,4 +1,5 @@
-import java.lang.Math;
+// ATTENTION TO GITHUB VIEWERS: This code is purposefully made to not use 2 ^ n to calculate a pascal row sum. 
+// For an actual implementation, 2 ^ n would be vastly more efficent.
 
 public class PascalRowSum {
 
