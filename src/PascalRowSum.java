@@ -2,30 +2,102 @@ import java.lang.Math;
 
 public class PascalRowSum {
 
-    public static long pascalRowSumRecursive(int n) {
+    public static long[] buildPascalRow(int n) {
+        long[] row = new long[n];
+
         if (n == 1) {
-            return 1;
+            row[0] = 1;
         } else {
-            return pascalRowSumRecursive(n - 1) * 2l;
+            long[] prevRow = buildPascalRow(n - 1);
+
+            for (int i = 0; i < n; i++) {
+                if (i == 0) {
+                    row[0] = 1;
+                } else if (i >= n - 1) {
+                    row[i] = 1;
+                } else {
+                    row[i] = prevRow[i] + prevRow[i - 1];
+                }
+            }
         }
+        return row;
+    }
+
+
+    public static long pascalRowSumRecursive(int n) {
+        if (n == 1) return 1;
+
+        long[] row = buildPascalRow(n);
+
+        long sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += row[i];
+        }
+        return sum;
     }
 
     public static long pascalRowSumIterative(int n) {
-        return Math.powExact(2l, n);
+        if (n == 1) {
+            return 1;
+        }
+
+        long[] row = null;
+        long[] prevRow = new long[1];
+        prevRow[0] = 1;
+
+        for (int i = 2; i <= n; i++) { // i is new row length
+            row = new long[i];
+
+            for (int j = 0; j < i; j++) { // j is index
+                if (j == 0) {
+                    row[0] = 1;
+                } else if (j >= i - 1) {
+                    row[j] = 1;
+                } else {
+                    row[j] = prevRow[j] + prevRow[j - 1];
+                }
+            }
+            prevRow = row;
+        }
+
+        long sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += row[i];
+        }
+        return sum;
+    }
+
+    public static void printTableRow(int n, boolean recursive) {
+        long prevTime;
+        long time;
+        if (recursive) {
+            prevTime = System.nanoTime();
+            pascalRowSumRecursive(n);
+            time = System.nanoTime() - prevTime;
+        } else {
+            prevTime = System.nanoTime();
+            pascalRowSumIterative(n);
+            time = System.nanoTime() - prevTime;
+        }
+        System.out.println("pascalRowSum" + (recursive ? ("Recursive\t| ") : ("Iterative\t| ")) + n + "\t\t| " + time);
     }
 
     public static void main(String[] args) {
-        System.out.println(pascalRowSumIterative(1));
-        System.out.println(pascalRowSumIterative(2));
-        System.out.println(pascalRowSumIterative(3));
-        System.out.println(pascalRowSumIterative(4));
-        System.out.println(pascalRowSumIterative(5));
-        System.out.println(pascalRowSumIterative(33));
-        System.out.println(pascalRowSumRecursive(1));
-        System.out.println(pascalRowSumRecursive(2));
-        System.out.println(pascalRowSumRecursive(3));
-        System.out.println(pascalRowSumRecursive(4));
-        System.out.println(pascalRowSumRecursive(5));
-        System.out.println(pascalRowSumRecursive(32));
+        System.out.println("Method\t\t\t| Input (n)\t| Time (ns)");
+        System.out.println("------------------------|---------------|-----------");
+
+        printTableRow(1, false);
+        printTableRow(2, false);
+        printTableRow(3, false);
+        printTableRow(4, false);
+        printTableRow(5, false);
+        printTableRow(33, false);
+
+        printTableRow(1, true);
+        printTableRow(2, true);
+        printTableRow(3, true);
+        printTableRow(4, true);
+        printTableRow(5, true);
+        printTableRow(33, true);
     }
 }
